@@ -119,5 +119,5 @@ Les requêtes SQL de transformation sont dans `sql/`.
 
 ---
 
-**Yannis** — Data Engineering  
-École 42 Toulouse · [GitHub](#) · [LinkedIn](#)
+**Yannis Bouharaoua** — Data Engineering  
+École 42 Toulouse · [GitHub](https://github.com/YannisBouharaoua) · [LinkedIn](https://www.linkedin.com/in/yannis-bouharaoua-541170298/)
