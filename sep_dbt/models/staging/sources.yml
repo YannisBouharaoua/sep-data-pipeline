@@ -7,3 +7,7 @@ sources:
     tables:
       - name: effectifs
       - name: depenses
+      - name: openmedic_2019
+      - name: openmedic_2020
+      - name: openmedic_2021
+      - name: openmedic_2022

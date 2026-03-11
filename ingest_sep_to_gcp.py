@@ -25,15 +25,35 @@ LOCATION    = "EU"
 # Fichiers locaux à ingérer
 # Place tes CSV dans le même dossier que ce script
 FILES = {
-    "depenses": {
-        "local_path": "depenses.csv",          # renomme ton fichier ainsi
-        "gcs_path":   "raw/depenses.csv",
-        "bq_table":   "depenses",
+    # "depenses": {
+    #     "local_path": "depenses.csv",
+    #     "gcs_path":   "raw/depenses.csv",
+    #     "bq_table":   "depenses",
+    # },
+    # "effectifs": {
+    #     "local_path": "effectifs.csv",
+    #     "gcs_path":   "raw/effectifs.csv",
+    #     "bq_table":   "effectifs",
+    # },
+    "openmedic_2019": {
+        "local_path": "openmedic_2019_clean.csv",
+        "gcs_path":   "raw/openmedic_2019.csv",
+        "bq_table":   "openmedic_2019",
     },
-    "effectifs": {
-        "local_path": "effectifs.csv",          # renomme ton fichier ainsi
-        "gcs_path":   "raw/effectifs.csv",
-        "bq_table":   "effectifs",
+    "openmedic_2020": {
+        "local_path": "openmedic_2020_clean.csv",
+        "gcs_path":   "raw/openmedic_2020.csv",
+        "bq_table":   "openmedic_2020",
+    },
+    "openmedic_2021": {
+        "local_path": "openmedic_2021_clean.csv",
+        "gcs_path":   "raw/openmedic_2021.csv",
+        "bq_table":   "openmedic_2021",
+    },
+    "openmedic_2022": {
+        "local_path": "openmedic_2022_clean.csv",
+        "gcs_path":   "raw/openmedic_2022.csv",
+        "bq_table":   "openmedic_2022",
     },
 }
 
@@ -69,11 +89,11 @@ def load_gcs_to_bq(client: bigquery.Client, gcs_path: str, table_id: str) -> Non
 
     job_config = bigquery.LoadJobConfig(
         source_format       = bigquery.SourceFormat.CSV,
-        skip_leading_rows   = 1,          # ignore header
-        autodetect          = True,       # détection automatique des types
+        skip_leading_rows   = 1,
+        autodetect          = True,
         write_disposition   = bigquery.WriteDisposition.WRITE_TRUNCATE,
         encoding            = "UTF-8",
-        field_delimiter     = ";",        # les CSV ameli utilisent le point-virgule
+        field_delimiter = ";" if ("openmedic" in table_id or table_id in ["effectifs", "depenses"]) else ",",
         allow_quoted_newlines = True,
     )
 
