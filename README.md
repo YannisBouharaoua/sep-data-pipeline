@@ -2,7 +2,7 @@
 ### Analyse épidémiologique & économique de la Sclérose en Plaques en France (2015–2023)
 
 Pipeline de données end-to-end construit sur des données officielles de l'Assurance Maladie.  
-**Stack :** Python · Google Cloud Storage · BigQuery · Looker Studio
+**Stack :** Python · Google Cloud Storage · BigQuery · dbt · Looker Studio
 
 ---
 
@@ -35,7 +35,7 @@ data.gouv.fr / data.ameli.fr
   Looker Studio Dashboard
 ```
 
-Choix technique clé : séparer les 3 couches raw/staging/mart dans BigQuery permet de retracer l'origine de chaque transformation et de rejouer n'importe quelle étape sans retoucher les données sources.
+Les transformations raw → staging → mart sont gérées par **dbt** — versionnées dans Git, testées automatiquement, et documentées avec lineage graph.
 
 ---
 
@@ -82,7 +82,8 @@ Données produites par la Caisse Nationale de l'Assurance Maladie — licence OD
 |---|---|
 | Ingestion | Python, google-cloud-storage, google-cloud-bigquery |
 | Stockage | Google Cloud Storage (data lake raw) |
-| Transformation | BigQuery SQL (3 couches : raw / staging / mart) |
+| Transformation | dbt (modèles SQL versionnés, tests, documentation) |
+| Entrepôt | BigQuery (3 couches : raw / staging / mart) |
 | Visualisation | Looker Studio |
 | Environnement | gcloud CLI, venv, Git |
 
@@ -91,10 +92,10 @@ Données produites par la Caisse Nationale de l'Assurance Maladie — licence OD
 ## Lancer le projet
 
 ```bash
-git clone https://github.com/[username]/sep-data-pipeline.git
+git clone https://github.com/YannisBouharaoua/sep-data-pipeline.git
 cd sep-data-pipeline
-python3 -m venv venv && source venv/bin/activate
-pip install google-cloud-storage google-cloud-bigquery pandas
+python3.11 -m venv venv && source venv/bin/activate
+pip install google-cloud-storage google-cloud-bigquery pandas dbt-bigquery
 
 # Authentification GCP
 gcloud auth application-default login
@@ -104,20 +105,46 @@ gcloud config set project [PROJECT_ID]
 Télécharge les CSV depuis [data.ameli.fr](https://data.ameli.fr) et [data.gouv.fr](https://www.data.gouv.fr), renomme-les `effectifs.csv` et `depenses.csv`, puis :
 
 ```bash
+# Ingestion vers GCS et BigQuery
 python ingest_sep_to_gcp.py
+
+# Transformations dbt
+cd sep_dbt
+dbt run    # crée les modèles staging et mart
+dbt test   # vérifie la qualité des données
+dbt docs generate && dbt docs serve  # documentation + lineage graph
 ```
 
-Les requêtes SQL de transformation sont dans `sql/`.
+---
+
+## Structure du projet
+
+```
+sep-data-pipeline/
+├── README.md
+├── ingest_sep_to_gcp.py        ← pipeline d'ingestion Python
+└── sep_dbt/
+    ├── dbt_project.yml
+    └── models/
+        ├── staging/
+        │   ├── sources.yml
+        │   ├── schema.yml      ← tests de qualité
+        │   ├── stg_effectifs_sep.sql
+        │   └── stg_depenses_sep.sql
+        └── marts/
+            ├── mart_prevalence_region.sql
+            └── mart_depenses_poste.sql
+```
 
 ---
 
 ## Améliorations prévues
 
-- Intégration dbt pour versionner et tester les transformations
 - Ajout des données Open Medic (prescriptions de traitements de fond sur 10 ans)
 - Orchestration annuelle avec Cloud Composer (Airflow)
+- Tests dbt supplémentaires sur les marts
 
 ---
 
-**Yannis Bouharaoua** — Data Engineer Junior 
+**Yannis Bouharaoua** — Data Engineer Junior  
 École 42 Toulouse · [GitHub](https://github.com/YannisBouharaoua) · [LinkedIn](https://www.linkedin.com/in/yannis-bouharaoua-541170298/)
