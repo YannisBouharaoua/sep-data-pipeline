@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: stg_effectifs_sep
+    description: "Effectifs patients SEP filtrés depuis la table raw Assurance Maladie"
+    columns:
+      - name: code_pathologie
+        description: "Code SEP — toujours NEU_SEP_IND"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['NEU_SEP_IND']
+      - name: annee
+        description: "Année de la donnée"
+        tests:
+          - not_null
+      - name: nb_patients
+        description: "Nombre de patients — peut être NULL si effectif < 10 (confidentialité CNAM)"
+      - name: prevalence
+        description: "Prévalence pour 1000 personnes — peut être NULL si effectif < 10"
+
+  - name: stg_depenses_sep
+    description: "Dépenses SEP filtrées depuis la table raw Assurance Maladie"
+    columns:
+      - name: annee
+        tests:
+          - not_null
+      - name: poste
+        tests:
+          - not_null
+      - name: montant
+        tests:
+          - not_null

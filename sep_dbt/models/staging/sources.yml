@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: sep_raw
+    database: project-f311ccd4-12f3-441a-822
+    schema: sep_raw
+    tables:
+      - name: effectifs
+      - name: depenses
