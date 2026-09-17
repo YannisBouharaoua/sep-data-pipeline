@@ -159,5 +159,5 @@ sep-data-pipeline/
 
 ---
 
-**Yannis Bouharaoua** — Data Engineer Junior  
+**Yannis Bouharaoua**
 École 42 Toulouse · [GitHub](https://github.com/YannisBouharaoua) · [LinkedIn](https://www.linkedin.com/in/yannis-bouharaoua-541170298/)
